@@ -5,12 +5,14 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Mon Feb  9 18:38:17 2015 Nicolas Camilli
+** Last update Mon Feb  9 19:12:12 2015 hirt_r
 */
 
+#include <stdio.h>
 #include <unistd.h>
 
 void	*malloc(size_t size)
 {
+  printf("MOUILLE\n");
   return (NULL);
 }
