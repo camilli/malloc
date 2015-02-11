@@ -5,14 +5,15 @@
 ## Login   <camill_n@epitech.net>
 ##
 ## Started on  Mon Feb  9 18:32:06 2015 Nicolas Camilli
-## Last update Mon Feb  9 19:14:50 2015 hirt_r
+## Last update Wed Feb 11 13:33:47 2015 Nicolas Camilli
 ##
 
 ifndef HOSTTYPE
 	HOSTTYPE=i386-linux
 endif
 
-SRCS = malloc.c \
+SRCS =	malloc.c \
+	bins.c \
 
 RM	= rm -f
 
