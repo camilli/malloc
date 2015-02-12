@@ -5,7 +5,7 @@
 ## Login   <camill_n@epitech.net>
 ##
 ## Started on  Mon Feb  9 18:32:06 2015 Nicolas Camilli
-## Last update Wed Feb 11 13:33:47 2015 Nicolas Camilli
+## Last update Wed Feb 11 16:57:53 2015 Nicolas Camilli
 ##
 
 ifndef HOSTTYPE
@@ -19,7 +19,7 @@ RM	= rm -f
 
 NAME = libmy_malloc_$(HOSTTYPE).so
 
-CC	= cc -fPIC -shared
+CC	= cc -fPIC -shared -lm
 
 OBJS	= $(SRCS:.c=.o)
 

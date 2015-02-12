@@ -5,12 +5,12 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Wed Feb 11 16:32:51 2015 Nicolas Camilli
+** Last update Thu Feb 12 14:45:04 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
 
-static t_chunk	*bins[128] = {0};
+static t_chunk	*bins[MAX_SMALLBIN_SIZE] = {0};
 static void	*start = NULL;
 
 void		*malloc(size_t size)
@@ -20,6 +20,7 @@ void		*malloc(size_t size)
   void		*next_ptr;
   size_t	nb_pg_to_alloc;
 
+  size += (size % 8);
   chunk = find_bins(bins, size);
   if (chunk)
     chunk->status = INUSE;
@@ -31,15 +32,16 @@ void		*malloc(size_t size)
       chunk = sbrk(nb_pg_to_alloc * getpagesize());
       if (start == NULL)
 	start = chunk;
-      chunk->size = size + (size % 8);
+      chunk->size = size;
       chunk->status = INUSE;
       next_ptr = chunk + 1;
       next_ptr += size + 1;
       chunk_next = next_ptr;
       chunk_next->size = (nb_pg_to_alloc * getpagesize())
       - CHUNKSIZE - size - 1;
-      //chunk_next->status = FREE;
-      //add_bins(bins, chunk_next);
+      chunk_next->status = FREE;
+      add_bins(bins, chunk_next);
+      printf("alloc\n");
       //printf("test %ld", ((double)(chunk + 1)) % 8);
     }
   return (chunk + 1);
