@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Thu Feb 12 18:39:44 2015 Nicolas Camilli
-** Last update Fri Feb 13 14:13:46 2015 Nicolas Camilli
+** Last update Fri Feb 13 17:02:40 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -22,6 +22,6 @@ size_t	get_size(size_t needle_size)
 
   needle_size += (needle_size % 8) + MINSIZE;
   nb_pages = needle_size / getpagesize();
-  (!nb_pages) ? ++nb_pages : 0;
+  ++nb_pages;
   return (nb_pages);
 }

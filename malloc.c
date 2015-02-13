@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Fri Feb 13 15:44:02 2015 Nicolas Camilli
+** Last update Fri Feb 13 20:57:16 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -14,18 +14,17 @@ void		*malloc(size_t size)
 {
   t_chunk	*ptr;
 
-  if (size <= 0)
-    return (NULL);
   ptr = find_free_memory(size);
   if (!ptr)
     {
       create_page(size);
       ptr = find_free_memory(size);
     }
-  if (ptr)
-    printf("ptr: %d\n", ptr->size);
-  if (ptr)
-    ++ptr;
+
+  ++ptr;
+  if (DEBUG)
+    printf("Malloc return %p (Ask for %d, given: %d)\n", ptr, size,
+	   (ptr - 1)->size);
   return (ptr);
 }
 
@@ -33,7 +32,12 @@ void		free(void *ptr)
 {
   t_chunk	*chunk;
 
+  if (!ptr)
+    return ;
+  if (DEBUG)
+    printf("PTR TO FREE %p\n", ptr);
   chunk = ptr;
-  --chunk;
-  add_bins(chunk);
+  --ptr;
+  if (inuse(chunk))
+    add_bins(ptr);
 }
