@@ -5,7 +5,7 @@
 ## Login   <camill_n@epitech.net>
 ##
 ## Started on  Mon Feb  9 18:32:06 2015 Nicolas Camilli
-## Last update Wed Feb 11 16:57:53 2015 Nicolas Camilli
+## Last update Thu Feb 12 18:40:16 2015 Nicolas Camilli
 ##
 
 ifndef HOSTTYPE
@@ -14,6 +14,8 @@ endif
 
 SRCS =	malloc.c \
 	bins.c \
+	chunk.c \
+	utils.c \
 
 RM	= rm -f
 
