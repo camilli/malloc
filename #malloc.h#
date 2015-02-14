@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Tue Feb 10 17:51:25 2015 Nicolas Camilli
-** Last update Fri Feb 13 21:29:25 2015 Nicolas Camilli
+** Last update Fri Feb 13 21:13:09 2015 Nicolas Camilli
 */
 
 #ifndef MALLOC_H_
@@ -44,6 +44,6 @@ void	create_page(size_t size_needle);
 void	add_bins(t_chunk *chunk);
 t_chunk	*find_free_memory(size_t size);
 size_t	get_size(size_t);
-void	*split_chunk(t_chunk *chunk, size_t size_needle);
+
 
 #endif

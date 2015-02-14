@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Fri Feb 13 20:57:16 2015 Nicolas Camilli
+** Last update Sat Feb 14 13:55:55 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -20,11 +20,17 @@ void		*malloc(size_t size)
       create_page(size);
       ptr = find_free_memory(size);
     }
-
+  size_t *ptir = (void *)ptr - SIZE_SZ;
+  static int i = 0;
+  if (i > 0)
+    printf("Taille prev: %d (%p)\n", *ptir, ptir);
+  ++i;
   ++ptr;
-  if (DEBUG)
+  if (DEBUG && ptr)
     printf("Malloc return %p (Ask for %d, given: %d)\n", ptr, size,
 	   (ptr - 1)->size);
+  else if (DEBUG && !ptr)
+    printf("return NULL\n");
   return (ptr);
 }
 
