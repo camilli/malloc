@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Thu Feb 12 18:39:25 2015 Nicolas Camilli
-** Last update Sat Feb 14 13:54:37 2015 Nicolas Camilli
+** Last update Sat Feb 14 14:33:27 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -18,7 +18,7 @@ void		fill_chunk(t_chunk *chunk, size_t size_request)
   ptr = chunk;
   if (DEBUG)
     printf("SIZE writed at: %p\n", ptr + MINSIZE + chunk->size - SIZE_SZ);
-  memcpy(ptr + MINSIZE + chunk->size - (SIZE_SZ << 1), &chunk->size, SIZE_SZ);
+  memcpy(ptr + MINSIZE + chunk->size - SIZE_SZ, &chunk->size, SIZE_SZ);
 }
 
 void		*split_chunk(t_chunk *chunk, size_t size_needle)
