@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Thu Feb 12 18:39:17 2015 Nicolas Camilli
-** Last update Sat Feb 14 01:15:22 2015 Nicolas Camilli
+** Last update Sat Feb 14 21:56:28 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -28,6 +28,7 @@ int	get_index(int size)
 	  sfb >>= 1;
 	}
       ifb += (sfb - MINSIZE) >> 2;
+      ifb += 4;
     }
   return (ifb);
 }
@@ -40,7 +41,7 @@ void	add_bins(t_chunk *chunk)
   index = get_index(chunk->size);
   clear_inuse(chunk);
   if (DEBUG)
-    printf("Add %p chunk of %d octet in bins %d\n", chunk, chunk->size, index);
+    printf("Add %ld chunk of %d octet in bins %d\n", chunk, chunk->size, index);
   if (!bins[index])
     {
       chunk->next = NULL;
@@ -64,7 +65,7 @@ t_chunk		*find_free_memory(size_t size)
   index = get_index(size);
   while (index < MAX_SMALLBIN_SIZE)
     {
-      if (bins[index])
+      if (bins[index] && bins[index]->size >= size)
 	{
 	  chunk = bins[index];
 	  bins[index] = chunk->next;
@@ -80,4 +81,19 @@ t_chunk		*find_free_memory(size_t size)
       ++index;
     }
   return (NULL);
+}
+
+void		collapse_memory(t_chunk *chunk)
+{
+  void		*current;
+  void		*end;
+
+  end = sbrk(0);
+  while (current < end)
+    {
+      if (!inuse((t_chunk *)current))
+	collapse_chunk(current);
+      else
+	current += ((t_chunk *)current)->size + MINSIZE;
+    }
 }

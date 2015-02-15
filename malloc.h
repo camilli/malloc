@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Tue Feb 10 17:51:25 2015 Nicolas Camilli
-** Last update Fri Feb 13 21:29:25 2015 Nicolas Camilli
+** Last update Sat Feb 14 22:01:26 2015 Nicolas Camilli
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 # define MINSIZE (sizeof(t_chunk) + SIZE_SZ)
 # define MAX_SMALLBIN_OFFSET  18
 # define MAX_SMALLBIN_SIZE   144
-# define DEBUG 1
+# define DEBUG 0
 
 # define INUSE 0x01
 
@@ -25,6 +25,7 @@
 
 # include <stdio.h>
 # include <unistd.h>
+# include <stdint.h>
 # include <string.h>
 # include <math.h>
 
@@ -36,14 +37,17 @@ typedef struct		s_chunk
 }			t_chunk;
 
 static t_chunk	*bins[MAX_SMALLBIN_SIZE] = {0};
+static void	*start = NULL;
 
 void	*malloc(size_t size);
-//void	*realloc(void *ptr, size_t size);
+void	*realloc(void *ptr, size_t size);
 void	free(void *ptr);
 void	create_page(size_t size_needle);
 void	add_bins(t_chunk *chunk);
 t_chunk	*find_free_memory(size_t size);
 size_t	get_size(size_t);
 void	*split_chunk(t_chunk *chunk, size_t size_needle);
+void	collapse_chunk(t_chunk *chunk);
+void	collapse_memory(t_chunk *chunk);
 
 #endif
