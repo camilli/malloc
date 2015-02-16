@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Thu Feb 12 18:39:17 2015 Nicolas Camilli
-** Last update Sat Feb 14 21:56:28 2015 Nicolas Camilli
+** Last update Mon Feb 16 13:36:31 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -65,16 +65,17 @@ t_chunk		*find_free_memory(size_t size)
   index = get_index(size);
   while (index < MAX_SMALLBIN_SIZE)
     {
-      if (bins[index] && bins[index]->size >= size)
+      if (bins[index] && adjust_size(bins[index]) >= size)
 	{
 	  chunk = bins[index];
 	  bins[index] = chunk->next;
 	  if (chunk->next)
 	    chunk->next->prev = NULL;
 	  chunk = split_chunk(chunk, size);
-	  if (chunk && chunk->size >= size)
+	  if (chunk && adjust_size(chunk) >= size)
 	    {
-	      set_inuse(chunk);
+	      if (!inuse(chunk))
+		set_inuse(chunk);
 	      return (chunk);
 	    }
 	}
@@ -83,17 +84,23 @@ t_chunk		*find_free_memory(size_t size)
   return (NULL);
 }
 
-void		collapse_memory(t_chunk *chunk)
+void		collapse_memory(t_chunk *chunk, void *start)
 {
-  void		*current;
-  void		*end;
+  void		*prev_ptr;
+  size_t	prev_size;
 
-  end = sbrk(0);
-  while (current < end)
+  if ((void *)chunk <= start)
+    return ;
+  prev_size = *((size_t *)((void *)chunk - SIZE_SZ));
+  prev_size & INUSE ? prev_size &= ~INUSE : 0;
+  prev_ptr = chunk;
+  prev_ptr = prev_ptr - prev_size - MINSIZE;
+  if ((void *)prev_ptr <= start)
+    return ;
+  if ((void *)chunk != sbrk(0))
     {
-      if (!inuse((t_chunk *)current))
-	collapse_chunk(current);
-      else
-	current += ((t_chunk *)current)->size + MINSIZE;
+      if (!inuse((t_chunk *)prev_ptr) && !inuse(chunk))
+	collapse_chunk((t_chunk *)prev_ptr, chunk);
     }
+  collapse_memory(prev_ptr, start);
 }

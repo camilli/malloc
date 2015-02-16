@@ -5,39 +5,37 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Sat Feb 14 22:04:25 2015 Nicolas Camilli
+** Last update Mon Feb 16 15:18:31 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
+
+static void	*start = NULL;
 
 void		*malloc(size_t size)
 {
   t_chunk	*ptr;
 
-  if (size % 8)
-    size += (8 - (size % 8));
+  (size % 8) ? size += (8 - (size % 8)) : 0;
+  if (start)
+    collapse_memory(sbrk(0), start);
+  else
+    start = sbrk(0);
   ptr = find_free_memory(size);
   if (!ptr)
     {
       create_page(size);
       ptr = find_free_memory(size);
     }
-  size_t *ptir = (void *)ptr - SIZE_SZ;
-  static int i = 0;
-  /* if (i > 0) */
-  /*   printf("Taille prev: %d (%p)\n", *ptir, ptir); */
-  /* ++i; */
-  if (i > 0)
-    collapse_memory(start);
-  ++i;
   ++ptr;
   if (DEBUG && ptr)
-    printf("Malloc return %ld (Ask for %d, given: %d)\n", ptr, size,
+    printf("Malloc return %ld (Ask for %d, given: %ld)\n", ptr, size,
 	   (ptr - 1)->size);
   else if (DEBUG && !ptr)
     printf("return NULL\n");
   return (ptr);
 }
+
 
 void		free(void *ptr)
 {
@@ -45,12 +43,16 @@ void		free(void *ptr)
 
   if (!ptr)
     return ;
-  if (DEBUG)
-    printf("PTR TO FREE %ld\n", chunk);
   chunk = ptr;
   --chunk;
+  if (DEBUG)
+    printf("PTR TO FREE %ld\n", chunk);
   if (inuse(chunk))
-    add_bins(chunk);
+    {
+      //      if (!adjust_brk())
+      add_bins(chunk);
+      //collapse_chunk(chunk);
+    }
 }
 
 void	*realloc(void *ptr, size_t s)
@@ -65,7 +67,8 @@ void	*realloc(void *ptr, size_t s)
       chunk = ptr;
       --chunk;
       size = chunk->size;
-      chunk++;
+      ++chunk;
+      size & INUSE ? size &= ~INUSE : 0;
       memcpy(new, chunk, size);
       free(chunk);
     }
@@ -75,8 +78,6 @@ void	*realloc(void *ptr, size_t s)
 void		*calloc(size_t nmemb, size_t size)
 {
   void		*chunk;
-  int		i;
-  size_t	addr;
 
   chunk = malloc(nmemb * size);
   if (chunk)
