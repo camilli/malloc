@@ -5,57 +5,68 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Mon Feb  9 18:34:36 2015 Nicolas Camilli
-** Last update Mon Feb 16 15:18:31 2015 Nicolas Camilli
+** Last update Thu Feb 19 22:39:18 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
 
-static void	*start = NULL;
+static void		*start = NULL;
+static pthread_mutex_t	mutex;
 
-void		*malloc(size_t size)
+void			*malloc(size_t size)
 {
-  t_chunk	*ptr;
+  t_chunk		*ptr;
 
+  pthread_mutex_lock(&mutex);
   (size % 8) ? size += (8 - (size % 8)) : 0;
-  if (start)
-    collapse_memory(sbrk(0), start);
-  else
-    start = sbrk(0);
+  if (!start)
+    {
+      pthread_mutex_init(&mutex, NULL);
+      start = sbrk(0);
+    }
   ptr = find_free_memory(size);
   if (!ptr)
     {
       create_page(size);
       ptr = find_free_memory(size);
     }
+  ptr ? set_inuse(ptr) : 0;
   ++ptr;
   if (DEBUG && ptr)
     printf("Malloc return %ld (Ask for %d, given: %ld)\n", ptr, size,
 	   (ptr - 1)->size);
   else if (DEBUG && !ptr)
     printf("return NULL\n");
+  pthread_mutex_unlock(&mutex);
   return (ptr);
 }
 
 
-void		free(void *ptr)
+void			free(void *ptr)
 {
-  t_chunk	*chunk;
+  t_chunk		*chunk;
+  t_chunk		*next_chunk;
 
   if (!ptr)
     return ;
+  pthread_mutex_lock(&mutex);
   chunk = ptr;
   --chunk;
+  next_chunk = (void *)chunk + adjust_size(chunk) + MINSIZE;
   if (DEBUG)
     printf("PTR TO FREE %ld\n", chunk);
   if (inuse(chunk))
     {
       //      if (!adjust_brk())
+      /* if (chunk != start && next_chunk != sbrk(0) && !inuse(next_chunk)) */
+      /* 	collapse_chunk(chunk, next_chunk); */
+      /* else */
       add_bins(chunk);
-      //collapse_chunk(chunk);
     }
+  pthread_mutex_unlock(&mutex);
 }
 
-void	*realloc(void *ptr, size_t s)
+void			*realloc(void *ptr, size_t s)
 {
   t_chunk		*chunk;
   size_t		size;
@@ -75,9 +86,9 @@ void	*realloc(void *ptr, size_t s)
   return (new);
 }
 
-void		*calloc(size_t nmemb, size_t size)
+void			*calloc(size_t nmemb, size_t size)
 {
-  void		*chunk;
+  void			*chunk;
 
   chunk = malloc(nmemb * size);
   if (chunk)

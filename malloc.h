@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Tue Feb 10 17:51:25 2015 Nicolas Camilli
-** Last update Mon Feb 16 15:20:44 2015 Nicolas Camilli
+** Last update Thu Feb 19 22:32:38 2015 Nicolas Camilli
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 # define MINSIZE (sizeof(t_chunk) + SIZE_SZ)
 # define MAX_SMALLBIN_OFFSET  18
 # define MAX_SMALLBIN_SIZE   144
-# define DEBUG 1
+# define DEBUG 0
 
 # define INUSE 0x01
 
@@ -28,6 +28,7 @@
 # include <stdint.h>
 # include <string.h>
 # include <math.h>
+# include <pthread.h>
 
 typedef struct		s_chunk
 {

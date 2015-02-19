@@ -5,7 +5,7 @@
 ** Login   <camill_n@epitech.net>
 **
 ** Started on  Thu Feb 12 18:39:17 2015 Nicolas Camilli
-** Last update Mon Feb 16 13:36:31 2015 Nicolas Camilli
+** Last update Thu Feb 19 22:23:52 2015 Nicolas Camilli
 */
 
 #include "malloc.h"
@@ -52,6 +52,8 @@ void	add_bins(t_chunk *chunk)
     {
       chunk->prev = NULL;
       chunk->next = bins[index];
+      if (chunk->next)
+	chunk->next->prev = chunk;
       bins[index] = chunk;
     }
 }
@@ -65,19 +67,15 @@ t_chunk		*find_free_memory(size_t size)
   index = get_index(size);
   while (index < MAX_SMALLBIN_SIZE)
     {
-      if (bins[index] && adjust_size(bins[index]) >= size)
+      if (bins[index] && bins[index]->size >= size)
 	{
 	  chunk = bins[index];
 	  bins[index] = chunk->next;
+	  //	  printf("chunk-> %ld (index: %d\n", chunk, index);
 	  if (chunk->next)
 	    chunk->next->prev = NULL;
 	  chunk = split_chunk(chunk, size);
-	  if (chunk && adjust_size(chunk) >= size)
-	    {
-	      if (!inuse(chunk))
-		set_inuse(chunk);
-	      return (chunk);
-	    }
+	  return (chunk);
 	}
       ++index;
     }
